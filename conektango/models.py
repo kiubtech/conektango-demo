@@ -2,21 +2,34 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.conf import settings
+from conektango.base import ConektaBase
 
 
-class Customer(models.Model):
-    id = models.CharField(max_length=30, verbose_name=_("ID Conekta"), unique=True, primary_key=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("Usuario"))
+class Customer(ConektaBase):
+    id = models.CharField(max_length=30, verbose_name=_("Conekta Id"), unique=True, primary_key=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("User"),
+                                help_text=_("Once created, it can not be modified"))
+    phone = models.CharField(max_length=50, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Creation date"))
 
     def __str__(self):
-        return "{0}: {1} ".format(self.user.get_full_name(), self.conekta_id)
+        return "{0} {1}".format(self.id, self.user.username)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            conekta_id = self.conektango.customer.save(self)
+            self.id = conekta_id
+            super(Customer, self).save(*args, **kwargs)
+        else:
+            self.conektango.customer.update(self)
+            super(Customer, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Cliente")
         verbose_name_plural = _("Clientes")
 
 
-class CreditCard(models.Model):
+class CreditCard(ConektaBase):
     id = models.CharField(max_length=30, verbose_name=_("ID Conekta"), unique=True, primary_key=True)
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name=_("Usuario"))
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
@@ -29,8 +42,7 @@ class CreditCard(models.Model):
         verbose_name_plural = _("Tarjetas de crédito")
 
 
-class Plan(models.Model):
-
+class Plan(ConektaBase):
     FREQ_OPTIONS = (
         (1, _('1')), (2, _('2')), (3, _('3')),
         (4, _('4')), (5, _('5')), (6, _('6')),
@@ -59,9 +71,11 @@ class Plan(models.Model):
     currency = models.CharField(max_length=3, choices=CURRENCY_OPTIONS, verbose_name=_("Moneda"))
     amount = models.IntegerField(verbose_name=_("Precio"))
     frequency = models.IntegerField(choices=FREQ_OPTIONS, default=1, verbose_name=_("Frecuencia"))
-    interval = models.CharField(choices=INTER_OPTIONS, default='month', max_length=50, verbose_name='Frecuencia de pago')
+    interval = models.CharField(choices=INTER_OPTIONS, default='month', max_length=50,
+                                verbose_name='Frecuencia de pago')
     trial_period_days = models.IntegerField(default=30, verbose_name=_("Días de prueba"))
-    expiry_count_mode = models.CharField(choices=COUNT_MODE_OPTIONS, default="forever", verbose_name=_("Duración"))
+    expiry_count_mode = models.CharField(max_length=10, choices=COUNT_MODE_OPTIONS, default="forever",
+                                         verbose_name=_("Duración"))
     expiry_count = models.IntegerField(null=True, blank=True, verbose_name=_("Número de repeticiones"),
                                        help_text=_("Solo aplica con el modo de cobro 'Fijo'"))
     # Extras
@@ -69,21 +83,17 @@ class Plan(models.Model):
     is_recommended = models.BooleanField(default=False, verbose_name='¿Recomendado?')
 
     def save(self, *args, **kwargs):
-        if not self.id:  # Nuevo
-            self.id = slugify(self.name)
         super(Plan, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        ordering = ('order', )
         verbose_name = _("Plan")
         verbose_name_plural = _("Planes")
 
 
-class Subscriber(models.Model):
-
+class Subscriber(ConektaBase):
     STATUS_CHOICES = (
         ('in_trial', _("En trial")),
         ('active', _("Active")),
@@ -109,4 +119,3 @@ class Subscriber(models.Model):
     class Meta:
         verbose_name = _("Suscriptor")
         verbose_name_plural = _("Suscriptores")
-
