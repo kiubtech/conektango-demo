@@ -68,10 +68,12 @@ class PlanInterface(_ConektaInit):
 
     def save(self, plan):
         """Save plan"""
+        amount = int(plan.amount * 100)
+
         json_data = {
             'id': plan.id,
             'name': plan.name,
-            'amount': plan.amount * 100,  # Convertimos de centavos a pesos
+            'amount': amount,  # Convertido a centavos
             'currency': plan.currency,
             'interval': plan.interval,
             'frecuency': plan.frequency,
@@ -90,9 +92,12 @@ class PlanInterface(_ConektaInit):
 
     def update(self, plan):
         """Update plan"""
+
+        amount = int(plan.amount * 100)
+
         json_data = {
             'name': plan.name,
-            'amount': plan.amount * 100,  # Convertimos de centavos a pesos
+            'amount': amount,  # Convertido a centavos
         }
         try:
             plan_obj = conekta.Plan.find(plan.id)
