@@ -115,7 +115,7 @@ class Plan(ConektaBase):
     currency = models.CharField(max_length=3, choices=CURRENCY_OPTIONS,
                                 help_text=_("Una vez creado no puede ser editado"),
                                 verbose_name=_("Moneda"))
-    amount = models.IntegerField(verbose_name=_("Precio"))
+    amount = models.DecimalField(verbose_name=_("Precio"), max_digits=20, decimal_places=2)
     frequency = models.IntegerField(choices=FREQ_OPTIONS, default=1,
                                     help_text=_("Una vez creado no puede ser editado"),
                                     verbose_name=_("Frecuencia"))
@@ -134,8 +134,6 @@ class Plan(ConektaBase):
                                            "Solo aplica con el modo de cobro 'Fijo'. "
                                            "Una vez creado no puede ser editado"))
     # Extras
-    is_visible = models.BooleanField(default=False, verbose_name=_('¿Visible?'))
-    is_recommended = models.BooleanField(default=False, verbose_name='¿Recomendado?')
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_("Fecha de creación"))
 
     def save(self, *args, **kwargs):
