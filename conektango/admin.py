@@ -14,7 +14,7 @@ class CustomerAdmin(admin.ModelAdmin):
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
     fields = ('id', 'name', ('amount', 'currency'), 'frequency', 'interval',
-              'trial_period_days', 'expiry_count_mode', 'expiry_count', 'is_visible', 'is_recommended', 'timestamp')
+              'trial_period_days', 'expiry_count_mode', 'expiry_count', 'timestamp')
     list_display = ('id', 'name', 'amount', 'currency', 'frequency', 'interval', 'timestamp')
     search_fields = ['name']
     list_filter = ('currency', 'interval')
