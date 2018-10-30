@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %} Mis tarjetas {% endblock title %}
+{% block content-title %}Mis tarjetas{% endblock content-title %}
+{% block content %}
+    {% if cards %}
+    {% else %}
+        <div class="row">
+            <div class="col-12 text-center" style="margin-top: 10px">
+                <p>Aún no tienes tarjetas vinculadas a tu cuenta</p>
+                <a href="" class="btn btn-outline-primary">+ Agregar nueva</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock content %}

@@ -14,9 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf.urls.static import static
 from django.urls import path, include
+from . import settings as setts
+
 
 urlpatterns = [
     path('', include('website.urls')),
-    path('admin/', admin.site.urls)
+    path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),  # django allauth
 ]
+
+urlpatterns += static(setts.STATIC_URL, document_root=setts.STATIC_ROOT)

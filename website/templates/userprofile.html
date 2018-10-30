@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %} Mi Perfil {% endblock title %}
+{% block content-title %}Mi Perfil{% endblock content-title %}
+{% block content %}
+    <div class="row">
+        <div class="col-12" style="margin-top: 10px">
+            <p><b>Username:</b> {{ user.username }}</p>
+            <p>Conekta ID: {% if conekta_user %}{{ conekta_user.id }} {% else %} N/A {% endif %}</p>
+        </div>
+        <hr>
+        <div class="col-12 text-right">
+            <small>
+                {% if conekta_user %}
+                    <a href="{% url 'website:create-delete-conekta-account' %}?action=0" class="text-danger">Eliminar cuenta conekta</a>
+                {% else %}
+                    <a href="{% url 'website:create-delete-conekta-account' %}?action=1" class="text-success">Generar cuenta conekta</a>
+                {% endif %}
+            </small>
+        </div>
+    </div>
+{% endblock content %}

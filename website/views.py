@@ -1,10 +1,47 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponseRedirect
 from django.views.generic import View
 from django.conf import settings
 from conektango.models import Card, Customer
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class CreateCard(View):
+class Index(View):
+    template_name = "index.html"
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+
+class UserProfile(View):
+    template_name = "userprofile.html"
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+
+class CreateOrDeleteConektaCustomer(View):
+
+    def get(self, request):
+        """
+        Recibimos un parámetro en el get:
+            - action = 0 -> Eliminar
+            - action = 1 -> Agregar customer
+        :param request:
+        :return: HttpResponseRedirect.
+        """
+        conekta_action = request.GET.get('action', '0')
+        if conekta_action == "1":  # Creamos el customer
+            customer = Customer()
+            customer.user = request.user
+            customer.save()
+        else:
+            Customer.objects.filter(user=request.user).delete()
+        return HttpResponseRedirect("/my-profile/")
+
+
+
+
+class CreateCard(LoginRequiredMixin, View):
     template_name = "create_card.html"
 
     def get(self, request):
@@ -19,3 +56,12 @@ class CreateCard(View):
         card.conekta_token_id = request.POST.get('conektaTokenId', None)
         card.save()
         return self.get(request)
+
+
+class CardList(LoginRequiredMixin, View):
+    template_name = "card_list.html"
+
+    def get(self, request):
+        cards = Card.objects.filter(customer__user=request.user)
+        ctx = {'cards': cards}
+        return render(request, self.template_name, ctx)
