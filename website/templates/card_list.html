@@ -1,13 +1,35 @@
 {% extends 'base.html' %}
 {% block title %} Mis tarjetas {% endblock title %}
-{% block content-title %}Mis tarjetas{% endblock content-title %}
+{% block content-title %}Mis tarjetas/
+    <small><a href="{% url 'website:card-add' %}" style="text-decoration: none">Agregar</a>
+    </small>{% endblock content-title %}
 {% block content %}
     {% if cards %}
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Conekta id</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for card in cards %}
+                <tr>
+                    <td>{{ card.name }}</td>
+                    <td>{{ card.brand }}</td>
+                    <td>{{ card.id }}</td>
+                    <td><a href="" class="btn btn-sm btn-danger">- Eliminar</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     {% else %}
         <div class="row">
             <div class="col-12 text-center" style="margin-top: 10px">
                 <p>Aún no tienes tarjetas vinculadas a tu cuenta</p>
-                <a href="" class="btn btn-outline-primary">+ Agregar nueva</a>
+                <a href="{% url 'website:card-add' %}" class="btn btn-outline-primary">+ Agregar nueva</a>
             </div>
         </div>
     {% endif %}

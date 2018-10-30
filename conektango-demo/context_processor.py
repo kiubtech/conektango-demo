@@ -8,8 +8,12 @@ def global_ctx(request):
     :param request: User request
     :return: ctx global
     """
+    try:
+        customer = Customer.objects.filter(user=request.user).first()
+    except:
+        customer = None
     ctx = {
-        'conekta_user': Customer.objects.filter(user=request.user).first(),
+        'conekta_user': customer,
     }
     return ctx
 

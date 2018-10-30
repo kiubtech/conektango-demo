@@ -8,6 +8,6 @@ urlpatterns = [
     path('conekta/account/create-or-delete', views.CreateOrDeleteConektaCustomer.as_view(),
          name='create-delete-conekta-account'),
     path('card/list/', views.CardList.as_view(), name='card-list'),
-    path('card/new/', views.CreateCard.as_view(), name='card-new'),
+    path('card/add/', views.CreateCard.as_view(), name='card-add'),
     path('my-profile/', views.UserProfile.as_view(), name='my-profile'),
 ]

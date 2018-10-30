@@ -39,14 +39,12 @@ class CreateOrDeleteConektaCustomer(View):
         return HttpResponseRedirect("/my-profile/")
 
 
-
-
 class CreateCard(LoginRequiredMixin, View):
-    template_name = "create_card.html"
+    template_name = "card_add.html"
 
     def get(self, request):
-        customers = Customer.objects.all()
-        ctx = {'public_key': settings.CONEKTA_PUBLIC_KEY, 'customers': customers}
+        customer = Customer.objects.filter(user=request.user).first()
+        ctx = {'public_key': settings.CONEKTA_PUBLIC_KEY, 'customer': customer}
         return render(request, self.template_name, ctx)
 
     def post(self, request):
@@ -55,7 +53,7 @@ class CreateCard(LoginRequiredMixin, View):
         card.customer = customer
         card.conekta_token_id = request.POST.get('conektaTokenId', None)
         card.save()
-        return self.get(request)
+        return HttpResponseRedirect("/card/list/")
 
 
 class CardList(LoginRequiredMixin, View):
