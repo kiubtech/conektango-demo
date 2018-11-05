@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %} Nuevo pago {% endblock title %}
+{% block content-title %}Nuevo pago{% endblock content-title %}
+{% block content %}
+    {% if default_card %}
+        <form class="mt-3" action="." method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="form-group col-4">
+                    <label for="id_product_name">Nombre del producto</label>
+                    <input required type="text" class="form-control" id="id_product_name" name="product_name"
+                           aria-describedby="emailHelp">
+                </div>
+                <div class="form-group col-4">
+                    <label for="id_quantity">Cantidad</label>
+                    <input required type="text" class="form-control" id="id_quantity" name="quantity"
+                           aria-describedby="emailHelp">
+                </div>
+                <div class="form-group col-4">
+                    <label for="id_product_price">Precio</label>
+                    <input required type="text" class="form-control" id="id_product_price" name="product_price"
+                           aria-describedby="emailHelp">
+                    <small class="text-info">Precio representado en centavos</small>
+                </div>
+            </div>
+            <div class="row mt-4 mb-3">
+                <div class="col-lg-12">
+                    <div class="alert alert-success" role="alert">
+                        Tarjeta default: *** ***{{ default_card.last4 }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-right">
+                    <button type="submit" class="btn btn-info">Comprar</button>
+                </div>
+            </div>
+        </form>
+    {% else %}
+        <div class="row">
+            <div class="col-12 text-center" style="margin-top: 10px">
+                <p>Primero debes contar con una tarjeta de crédito para poder realizar una compra</p>
+                <a href="{% url 'website:card-list' %}" class="btn btn-outline-primary btn-sm"> Consultar mis
+                    tarjetas</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock content %}

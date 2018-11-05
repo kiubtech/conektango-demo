@@ -20,7 +20,7 @@
                     <td>{{ card.name }}</td>
                     <td>{{ card.brand }}</td>
                     <td>{{ card.id }}</td>
-                    <td><a href="" class="btn btn-sm btn-danger">- Eliminar</a></td>
+                    <td><a href="{% url 'website:card-delete' card.id %}" class="btn btn-sm btn-danger">- Eliminar</a></td>
                 </tr>
             {% endfor %}
             </tbody>
